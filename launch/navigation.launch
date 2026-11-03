@@ -1,0 +1,44 @@
+<launch>
+  <!-- Rodar no robo (apos robot_bringup.launch) -->
+  <arg name="map_file" default="$(find pioneer_nav)/maps/arena.yaml"/>
+  <arg name="init_x"   default="0.0"/>
+  <arg name="init_y"   default="0.0"/>
+  <arg name="init_a"   default="0.0"/>
+
+  <node pkg="map_server" type="map_server" name="map_server" args="$(arg map_file)"/>
+
+  <node pkg="amcl" type="amcl" name="amcl" output="screen">
+    <remap from="scan" to="/scan"/>
+    <param name="odom_model_type" value="diff-corrected"/>
+    <param name="odom_frame_id"   value="odom"/>
+    <param name="base_frame_id"   value="base_link"/>
+    <param name="global_frame_id" value="map"/>
+    <param name="min_particles"   value="200"/>
+    <param name="max_particles"   value="3000"/>
+    <param name="update_min_d"    value="0.1"/>
+    <param name="update_min_a"    value="0.2"/>
+    <param name="laser_max_range" value="8.0"/>
+    <param name="laser_min_range" value="0.1"/>
+    <param name="laser_max_beams" value="60"/>
+    <param name="laser_model_type" value="likelihood_field"/>
+    <param name="transform_tolerance" value="0.5"/>
+    <param name="odom_alpha1" value="0.2"/>
+    <param name="odom_alpha2" value="0.2"/>
+    <param name="odom_alpha3" value="0.2"/>
+    <param name="odom_alpha4" value="0.2"/>
+    <param name="initial_pose_x" value="$(arg init_x)"/>
+    <param name="initial_pose_y" value="$(arg init_y)"/>
+    <param name="initial_pose_a" value="$(arg init_a)"/>
+  </node>
+
+  <node pkg="move_base" type="move_base" name="move_base" output="screen">
+    <rosparam file="$(find pioneer_nav)/config/costmap_common_params.yaml" command="load" ns="global_costmap"/>
+    <rosparam file="$(find pioneer_nav)/config/costmap_common_params.yaml" command="load" ns="local_costmap"/>
+    <rosparam file="$(find pioneer_nav)/config/global_costmap_params.yaml" command="load"/>
+    <rosparam file="$(find pioneer_nav)/config/local_costmap_params.yaml" command="load"/>
+    <rosparam file="$(find pioneer_nav)/config/move_base_params.yaml" command="load"/>
+    <param name="base_global_planner" value="navfn/NavfnROS"/>
+    <param name="base_local_planner"  value="dwa_local_planner/DWAPlannerROS"/>
+    <rosparam file="$(find pioneer_nav)/config/dwa_local_planner_params.yaml" command="load"/>
+  </node>
+</launch>

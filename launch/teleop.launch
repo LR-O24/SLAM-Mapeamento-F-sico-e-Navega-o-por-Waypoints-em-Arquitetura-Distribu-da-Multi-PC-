@@ -1,0 +1,7 @@
+<launch>
+  <!-- Rodar no NOTEBOOK 2 (seguranca/teleop). Velocidades baixas. -->
+  <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="teleop" output="screen">
+    <param name="speed" value="0.2"/>
+    <param name="turn"  value="0.4"/>
+  </node>
+</launch>

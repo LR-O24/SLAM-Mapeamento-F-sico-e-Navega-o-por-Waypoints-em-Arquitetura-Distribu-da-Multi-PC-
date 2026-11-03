@@ -1,0 +1,34 @@
+<launch>
+  <!-- Portas seriais (prefira /dev/serial/by-id/... para nao trocar USB0/USB1) -->
+  <arg name="pioneer_port" default="/dev/ttyUSB0"/>
+  <arg name="lidar_port"   default="/dev/ttyUSB1"/>
+  <!-- LMS291 via RS232: 9600, 19200 ou 38400 (500000 so com RS422/USB) -->
+  <arg name="lidar_baud"   default="38400"/>
+
+  <!-- Posicao do LIDAR em relacao ao base_link (metros) -->
+  <arg name="laser_x" default="0.15"/>
+  <arg name="laser_y" default="0.0"/>
+  <arg name="laser_z" default="0.25"/>
+  <arg name="laser_inverted" default="false"/>
+
+  <!-- Driver Pioneer: pose->/odom e cmd_vel->/cmd_vel -->
+  <node pkg="rosaria" type="RosAria" name="RosAria" output="screen">
+    <param name="port" value="$(arg pioneer_port)"/>
+    <remap from="/RosAria/pose"    to="/odom"/>
+    <remap from="/RosAria/cmd_vel" to="/cmd_vel"/>
+  </node>
+
+  <!-- Driver SICK LMS291 (sicktoolbox_wrapper) -> /scan -->
+  <node pkg="sicktoolbox_wrapper" type="sicklms" name="sicklms" output="screen">
+    <param name="port" value="$(arg lidar_port)"/>
+    <param name="baud" value="$(arg lidar_baud)"/>
+    <param name="connect_delay" value="30"/>
+    <param name="inverted" value="$(arg laser_inverted)"/>
+    <param name="angle" value="180"/>
+    <param name="resolution" value="1.0"/>   <!-- 1.0 grau ~9 Hz a 38400 baud; 0.5 ~5 Hz -->
+  </node>
+
+  <!-- base_link -> laser (o RosAria ja publica odom -> base_link) -->
+  <node pkg="tf" type="static_transform_publisher" name="base_to_laser"
+        args="$(arg laser_x) $(arg laser_y) $(arg laser_z) 0 0 0 base_link laser 50"/>
+</launch>

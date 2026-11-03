@@ -1,0 +1,21 @@
+base_frame: base_link
+odom_frame: odom
+map_frame: map
+map_update_interval: 2.0
+maxUrange: 7.5        # LMS291 em modo mm alcanca ~8 m
+maxRange: 8.0
+particles: 40
+delta: 0.05
+linearUpdate: 0.2
+angularUpdate: 0.1
+temporalUpdate: 3.0
+resampleThreshold: 0.5
+minimumScore: 100     # util com LIDAR de 180 graus
+srr: 0.1
+srt: 0.2
+str: 0.1
+stt: 0.2
+xmin: -5.0
+ymin: -5.0
+xmax: 5.0
+ymax: 5.0

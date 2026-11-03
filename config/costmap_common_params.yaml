@@ -1,0 +1,23 @@
+# Pioneer 3DX: ~0.44 x 0.38 m. MEDIR o robo com o LIDAR e acessorios e ajustar.
+footprint: [[-0.25, -0.22], [-0.25, 0.22], [0.25, 0.22], [0.25, -0.22]]
+
+obstacle_layer:
+  enabled: true
+  obstacle_range: 3.0
+  raytrace_range: 4.0
+  track_unknown_space: false
+  combination_method: 1
+  observation_sources: laser_scan
+  laser_scan:
+    sensor_frame: laser
+    data_type: LaserScan
+    topic: /scan
+    marking: true
+    clearing: true
+    expected_update_rate: 0.5   # LMS291 via RS232 e lento (5-10 Hz)
+   
+
+inflation_layer:
+  enabled: true
+  inflation_radius: 0.40        # arena de 3.5 m: nao exagerar
+  cost_scaling_factor: 5.0

@@ -1,0 +1,13 @@
+# Carregado dentro do namespace do no (~waypoints, ~origin, ...)
+# (x, y, theta[rad]) no frame "map". SUBSTITUA pelos valores medidos em campo
+# (rosrun tf tf_echo map base_link, com o robo sobre cada marca).
+waypoints:
+  - [1.0, 0.5, 0.0]
+  - [3.0, 0.5, 1.57]
+  - [3.0, 2.5, 3.14]
+  - [1.0, 2.5, -1.57]
+origin: [0.0, 0.0, 0.0]     # ponto de partida/retorno
+spin_mode: "goals"          # "goals" (via move_base) ou "cmd_vel" (por tempo)
+spin_speed: 0.5             # rad/s (usado em cmd_vel)
+goal_timeout: 120.0
+spin_step_timeout: 30.0

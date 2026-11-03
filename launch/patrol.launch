@@ -1,0 +1,6 @@
+<launch>
+  <!-- Rodar no robo DEPOIS de robot_bringup + navigation e de o AMCL convergir -->
+  <node pkg="pioneer_nav" type="waypoint_navigator.py" name="waypoint_navigator" output="screen">
+    <rosparam file="$(find pioneer_nav)/config/waypoints.yaml" command="load"/>
+  </node>
+</launch>

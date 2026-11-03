@@ -1,0 +1,17 @@
+<launch>
+  <!-- Rodar no robo: bringup + gmapping -->
+  <arg name="pioneer_port" default="/dev/ttyUSB0"/>
+  <arg name="lidar_port"   default="/dev/ttyUSB1"/>
+  <arg name="lidar_baud"   default="38400"/>
+
+  <include file="$(find pioneer_nav)/launch/robot_bringup.launch">
+    <arg name="pioneer_port" value="$(arg pioneer_port)"/>
+    <arg name="lidar_port"   value="$(arg lidar_port)"/>
+    <arg name="lidar_baud"   value="$(arg lidar_baud)"/>
+  </include>
+
+  <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
+    <remap from="scan" to="/scan"/>
+    <rosparam file="$(find pioneer_nav)/config/gmapping_params.yaml" command="load"/>
+  </node>
+</launch>

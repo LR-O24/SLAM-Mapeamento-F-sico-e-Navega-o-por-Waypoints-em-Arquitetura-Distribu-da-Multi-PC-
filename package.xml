@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<package>
+  <name>pioneer_nav</name>
+  <version>1.0.0</version>
+  <description>SLAM (gmapping), AMCL, move_base e patrulha para Pioneer 3DX + SICK LMS291-S05 (RS232). Robo: ROS Hydro; notebooks: ROS Melodic.</description>
+  <maintainer email="equipe@example.com">Equipe</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>rospy</build_depend>
+  <build_depend>actionlib</build_depend>
+  <build_depend>move_base_msgs</build_depend>
+  <build_depend>nav_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>tf</build_depend>
+
+  <run_depend>rospy</run_depend>
+  <run_depend>actionlib</run_depend>
+  <run_depend>move_base_msgs</run_depend>
+  <run_depend>nav_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>move_base</run_depend>
+  <run_depend>amcl</run_depend>
+  <run_depend>gmapping</run_depend>
+  <run_depend>map_server</run_depend>
+  <run_depend>navfn</run_depend>
+  <run_depend>dwa_local_planner</run_depend>
+  <run_depend>costmap_2d</run_depend>
+  <run_depend>sicktoolbox_wrapper</run_depend>
+  <run_depend>teleop_twist_keyboard</run_depend>
+  <run_depend>rviz</run_depend>
+  <!-- RosAria deve ser compilado a partir do codigo-fonte (ver README) -->
+</package>
