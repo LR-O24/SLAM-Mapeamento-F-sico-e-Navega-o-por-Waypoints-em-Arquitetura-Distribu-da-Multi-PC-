@@ -33,7 +33,18 @@ cd ~/catkin_ws && catkin_make
 ## 2. Rede Multi-PC
 Robo = ROS Master em `192.168.1.100`. De `source` em `env/env_robot.sh` no robo e `env/env_notebook.sh`
 nos notebooks (o IP do notebook e detectado automaticamente; eles ja fazem `source` do ROS correto).
-Teste: `ping` nos dois sentidos, `rostopic list` no notebook. **Sincronize os relogios** (`chrony`) nas tres maquinas: diferenca de relogio causa erros de TF no RViz.
+Teste: `ping` nos dois sentidos, `rostopic list` no notebook e `rostopic pub`/`echo` nos dois sentidos.
+
+**Relogios (inicio de CADA sessao).** Diferenca de relogio causa erros de TF no RViz.
+O chrony do robo acelera o relogio (~4%) por estar sem acesso aos servidores; por isso ele e parado:
+```bash
+# robo (root)
+bash ~/catkin_ws/src/pioneer_nav/env/sync_clock_robot.sh
+# cada notebook (uma vez: sudo apt install ntpdate)
+sudo ntpdate -u a.st1.ntp.br
+# conferir no notebook: os dois numeros devem diferir < 0.3 s
+ssh root@192.168.1.100 'date +%s.%N'; date +%s.%N
+```
 Se o notebook nao resolver o nome do robo, adicione `IP_ROBO hostname_robo` em `/etc/hosts` (e vice-versa).
 
 ## 3. LIDAR LMS291 (RS232)
