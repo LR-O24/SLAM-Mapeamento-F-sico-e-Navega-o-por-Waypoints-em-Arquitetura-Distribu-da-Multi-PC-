@@ -7,11 +7,11 @@
   <!-- LMS291 via RS232: 9600, 19200 ou 38400 (500000 so com RS422/USB) -->
   <arg name="lidar_baud"   default="38400"/>
 
-  <!-- Posicao do LIDAR em relacao ao base_link (metros). Valores usados em
-       trabalhos anteriores neste robo; confirmar com trena. -->
-  <arg name="laser_x" default="0.11"/>
+  <!-- Posicao do LIDAR em relacao ao base_link (metros), medida com trena em
+       04/11/2026: centro do SICK 5 cm a frente do eixo das rodas, 30 cm do chao. -->
+  <arg name="laser_x" default="0.05"/>
   <arg name="laser_y" default="0.0"/>
-  <arg name="laser_z" default="0.21"/>
+  <arg name="laser_z" default="0.30"/>
   <arg name="laser_inverted" default="false"/>
 
   <!-- Driver Pioneer: pose->/odom e cmd_vel->/cmd_vel -->
