@@ -60,14 +60,20 @@ class Drift(object):
         self.path = 0.0
         rospy.loginfo("Inicio registrado. Odom=%s SLAM=%s", str(o0), str(s0))
         trial = 0
+        min_path = rospy.get_param("~min_path", 1.0)
         while not rospy.is_shutdown():
             ask("\nPercurso concluido? Pare sobre a marca e pressione ENTER... ")
-            o1, s1 = self.odom, self.slam_pose()
+            # Congela tudo no instante do ENTER: o robo pode andar enquanto a trena e lida
+            o1, s1, path = self.odom, self.slam_pose(), self.path
+            if path < min_path:
+                print("Percurso de %.2f m (< %.1f m): ENTER acidental? Ignorado; "
+                      "a volta atual continua valendo." % (path, min_path))
+                continue
             ro, rs = relative(o0, o1), relative(s0, s1)
             pos_err = math.hypot(ro[0] - rs[0], ro[1] - rs[1])
             yaw_err = math.degrees(norm(ro[2] - rs[2]))
-            drift = 100.0 * pos_err / self.path if self.path > 0 else float("nan")
-            print("Distancia percorrida (odom): %.3f m" % self.path)
+            drift = 100.0 * pos_err / path
+            print("Distancia percorrida (odom): %.3f m" % path)
             print("Deslocamento odom : x=%.3f y=%.3f yaw=%.1f deg"
                   % (ro[0], ro[1], math.degrees(ro[2])))
             print("Deslocamento SLAM : x=%.3f y=%.3f yaw=%.1f deg"
@@ -85,10 +91,13 @@ class Drift(object):
                     f.write("trial,path_m,odom_dx,odom_dy,odom_yaw_deg,slam_dx,slam_dy,"
                             "slam_yaw_deg,pos_err_m,drift_pct,yaw_err_deg,real_err_tape_m\n")
                 f.write("%d,%.3f,%.3f,%.3f,%.1f,%.3f,%.3f,%.1f,%.3f,%.2f,%.1f,%s\n" % (
-                    trial, self.path, ro[0], ro[1], math.degrees(ro[2]),
+                    trial, path, ro[0], ro[1], math.degrees(ro[2]),
                     rs[0], rs[1], math.degrees(rs[2]), pos_err, drift, yaw_err, real))
             print("Salvo em drift_results.csv (tentativa %d). Outra volta + ENTER, ou Ctrl+C." % trial)
-            o0, s0, self.path = self.odom, self.slam_pose(), 0.0
+            # Proxima volta comeca na marca (pose do ENTER), mesmo que o robo tenha
+            # se movido enquanto o erro da trena era digitado
+            o0, s0 = o1, s1
+            self.path -= path
 
 
 if __name__ == "__main__":
