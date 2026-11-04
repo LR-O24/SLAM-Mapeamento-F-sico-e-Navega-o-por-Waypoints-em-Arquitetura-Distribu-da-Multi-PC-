@@ -1,7 +1,7 @@
 <launch>
   <!-- Rodar no robo: bringup + gmapping -->
-  <arg name="pioneer_port" default="/dev/ttyUSB0"/>
-  <arg name="lidar_port"   default="/dev/ttyUSB1"/>
+  <arg name="pioneer_port" default="/dev/ttyS0"/>
+  <arg name="lidar_port"   default="/dev/ttyS1"/>
   <arg name="lidar_baud"   default="38400"/>
 
   <include file="$(find pioneer_nav)/launch/robot_bringup.launch">

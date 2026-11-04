@@ -1,4 +1,4 @@
-# pioneer_nav — Pioneer 3DX + SICK LMS291-S05 (RS232), ROS 1 Noetic, Multi-PC
+# pioneer_nav — Pioneer 3DX + SICK LMS291-S05 (RS232), ROS Hydro (robo) + Melodic (notebooks), Multi-PC
 
 Pacote catkin com SLAM (gmapping), AMCL, move_base (DWA) e patrulha por waypoints.
 **Tudo pesado roda no robo (via SSH); no notebook rodam apenas RViz, teleop e diagnostico.**
@@ -11,35 +11,34 @@ Pacote catkin com SLAM (gmapping), AMCL, move_base (DWA) e patrulha por waypoint
 - **Nao rode nodes de navegacao nos notebooks**; so visualizacao. Misturar versoes de move_base/costmap_2d e a principal fonte de problemas.
 
 ## 1. Instalacao
-**No robo (Hydro):**
+**Robo (`root@pioneer`, 192.168.1.100, Hydro):** todas as dependencias ja estao instaladas
+(o apt do Hydro nao existe mais): `rosaria` + ARIA, `sicktoolbox_wrapper`, `gmapping`
+(em `/opt/ros/hydro`) e o stack `navigation` 1.11.14 compilado em `~/catkin_ws/src/navigation`.
+O git do robo e antigo demais para o GitHub, entao o pacote e copiado a partir de um notebook:
 ```bash
-sudo apt-get install ros-hydro-gmapping ros-hydro-amcl ros-hydro-map-server \
-  ros-hydro-move-base ros-hydro-dwa-local-planner ros-hydro-navfn \
-  ros-hydro-sicktoolbox-wrapper ros-hydro-teleop-twist-keyboard chrony
-# RosAria (codigo-fonte; requer ARIA instalada)
-cd ~/catkin_ws/src && git clone https://github.com/amor-ros-pkg/rosaria.git
-cp -r /caminho/pioneer_nav ~/catkin_ws/src/
-cd ~/catkin_ws && rosdep install --from-paths src --ignore-src --rosdistro hydro -y
-catkin_make && source devel/setup.bash
-sudo usermod -aG dialout $USER     # acesso as portas seriais (relogar)
+# no notebook
+scp -r ~/catkin_ws/src/pioneer_nav root@192.168.1.100:~/catkin_ws/src/
+# no robo (ssh root@192.168.1.100)
+cd ~/catkin_ws && catkin_make && source devel/setup.bash
 ```
-Se algum pacote nao estiver no apt do Hydro (ex.: `sicktoolbox_wrapper`), compile do GitHub em `~/catkin_ws/src`.
 
 **Nos notebooks (Melodic):**
 ```bash
 sudo apt install ros-melodic-rviz ros-melodic-teleop-twist-keyboard ros-melodic-rqt-graph chrony
-cd ~/catkin_ws/src && cp -r /caminho/pioneer_nav . && cd .. && catkin_make
+cd ~/catkin_ws/src && git clone https://github.com/LR-O24/SLAM-Mapeamento-F-sico-e-Navega-o-por-Waypoints-em-Arquitetura-Distribu-da-Multi-PC-.git pioneer_nav
+cd ~/catkin_ws && catkin_make
 ```
 (No notebook o pacote serve so para os launches `rviz`/`teleop` e o `nav.rviz`. Nao e necessario instalar os drivers.)
 
 ## 2. Rede Multi-PC
-Edite os IPs em `env/env_robot.sh` e `env/env_notebook.sh` (eles ja fazem `source` do ROS correto) e de `source` em cada maquina.
+Robo = ROS Master em `192.168.1.100`. De `source` em `env/env_robot.sh` no robo e `env/env_notebook.sh`
+nos notebooks (o IP do notebook e detectado automaticamente; eles ja fazem `source` do ROS correto).
 Teste: `ping` nos dois sentidos, `rostopic list` no notebook. **Sincronize os relogios** (`chrony`) nas tres maquinas: diferenca de relogio causa erros de TF no RViz.
 Se o notebook nao resolver o nome do robo, adicione `IP_ROBO hostname_robo` em `/etc/hosts` (e vice-versa).
 
 ## 3. LIDAR LMS291 (RS232)
 - Baud de 9600/19200/38400 (500k so com RS422/USB). Padrao: 38400, 180 graus, 1.0 grau (~9 Hz). Com 0.5 grau cai para ~5 Hz.
-- Descubra as portas: `ls -l /dev/serial/by-id/` e passe via `lidar_port:=` e `pioneer_port:=`.
+- Portas no robo do laboratorio: Pioneer em `/dev/ttyS0` (9600 baud), LIDAR em `/dev/ttyS1`. Outras portas: `lidar_port:=` e `pioneer_port:=`.
 - O driver pode demorar ate ~30 s para negociar a conexao (`connect_delay`). Confira com `rostopic hz /scan` e `rostopic echo -n1 /scan/header` (o `frame_id` deve ser `laser`; se for outro, altere `sensor_frame` em `config/costmap_common_params.yaml` e o nome no `static_transform_publisher`).
 - Se o scan sair espelhado/invertido: `laser_inverted:=true`.
 - Ajuste `laser_x/y/z` (posicao do LIDAR relativa ao centro do robo) em `robot_bringup.launch`.
@@ -49,7 +48,7 @@ Se o notebook nao resolver o nome do robo, adicione `IP_ROBO hostname_robo` em `
 Robo (SSH):
 ```bash
 roscore &                                  # ou em outro terminal
-roslaunch pioneer_nav mapping.launch pioneer_port:=/dev/ttyUSB0 lidar_port:=/dev/ttyUSB1
+roslaunch pioneer_nav mapping.launch
 rosservice call /RosAria/enable_motors     # se os motores nao responderem
 ```
 Notebook 1: `roslaunch pioneer_nav rviz.launch`

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Navegador de patrulha: visita N waypoints via move_base, faz giro de 360 graus
-from __future__ import division
 em cada um e retorna a origem. Parametros em config/waypoints.yaml."""
+from __future__ import division
 import math
 import rospy
 import actionlib

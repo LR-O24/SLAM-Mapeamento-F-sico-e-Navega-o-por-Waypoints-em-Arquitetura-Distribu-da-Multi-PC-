@@ -15,7 +15,8 @@ srr: 0.1
 srt: 0.2
 str: 0.1
 stt: 0.2
-xmin: -5.0
-ymin: -5.0
-xmax: 5.0
-ymax: 5.0
+# Arena 7 x 3.5 m: margem para qualquer ponto de partida do robo
+xmin: -10.0
+ymin: -10.0
+xmax: 10.0
+ymax: 10.0

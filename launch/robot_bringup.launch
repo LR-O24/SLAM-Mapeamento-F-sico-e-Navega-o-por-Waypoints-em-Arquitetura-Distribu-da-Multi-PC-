@@ -1,19 +1,23 @@
 <launch>
-  <!-- Portas seriais (prefira /dev/serial/by-id/... para nao trocar USB0/USB1) -->
-  <arg name="pioneer_port" default="/dev/ttyUSB0"/>
-  <arg name="lidar_port"   default="/dev/ttyUSB1"/>
+  <!-- Rodar no robo (ROS Hydro). Portas validadas no Pioneer do laboratorio:
+       ttyS0 = Pioneer (RosAria), ttyS1 = SICK LMS291 (RS232) -->
+  <arg name="pioneer_port" default="/dev/ttyS0"/>
+  <arg name="pioneer_baud" default="9600"/>
+  <arg name="lidar_port"   default="/dev/ttyS1"/>
   <!-- LMS291 via RS232: 9600, 19200 ou 38400 (500000 so com RS422/USB) -->
   <arg name="lidar_baud"   default="38400"/>
 
-  <!-- Posicao do LIDAR em relacao ao base_link (metros) -->
-  <arg name="laser_x" default="0.15"/>
+  <!-- Posicao do LIDAR em relacao ao base_link (metros). Valores usados em
+       trabalhos anteriores neste robo; confirmar com trena. -->
+  <arg name="laser_x" default="0.11"/>
   <arg name="laser_y" default="0.0"/>
-  <arg name="laser_z" default="0.25"/>
+  <arg name="laser_z" default="0.21"/>
   <arg name="laser_inverted" default="false"/>
 
   <!-- Driver Pioneer: pose->/odom e cmd_vel->/cmd_vel -->
   <node pkg="rosaria" type="RosAria" name="RosAria" output="screen">
     <param name="port" value="$(arg pioneer_port)"/>
+    <param name="baud" value="$(arg pioneer_baud)"/>
     <remap from="/RosAria/pose"    to="/odom"/>
     <remap from="/RosAria/cmd_vel" to="/cmd_vel"/>
   </node>
@@ -26,6 +30,7 @@
     <param name="inverted" value="$(arg laser_inverted)"/>
     <param name="angle" value="180"/>
     <param name="resolution" value="1.0"/>   <!-- 1.0 grau ~9 Hz a 38400 baud; 0.5 ~5 Hz -->
+    <param name="frame_id" value="laser"/>
   </node>
 
   <!-- base_link -> laser (o RosAria ja publica odom -> base_link) -->
