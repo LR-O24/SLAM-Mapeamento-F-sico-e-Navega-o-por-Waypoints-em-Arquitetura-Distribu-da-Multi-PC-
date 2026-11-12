@@ -15,6 +15,24 @@ def norm(a):
     return math.atan2(math.sin(a), math.cos(a))
 
 
+def parse_pose(p, name, deg):
+    """Aceita [x, y, theta], [x, y] (theta = 0) ou {x: .., y: .., theta: ..}."""
+    if isinstance(p, dict):
+        if "x" not in p or "y" not in p:
+            raise ValueError("%s = %s: faltam as chaves x e y" % (name, p))
+        vals = [p["x"], p["y"], p.get("theta", p.get("yaw", 0.0))]
+    elif isinstance(p, (list, tuple)) and len(p) in (2, 3):
+        vals = list(p) + [0.0] * (3 - len(p))
+    else:
+        raise ValueError("%s = %s: use [x, y, theta] (3 valores; recebidos %s)"
+                         % (name, p, len(p) if isinstance(p, (list, tuple)) else "?"))
+    try:
+        x, y, th = [float(v) for v in vals]
+    except (TypeError, ValueError):
+        raise ValueError("%s = %s: valores precisam ser numeros" % (name, p))
+    return x, y, (math.radians(th) if deg else th)
+
+
 def make_goal(x, y, yaw):
     g = MoveBaseGoal()
     g.target_pose.header.frame_id = "map"
@@ -31,8 +49,16 @@ def make_goal(x, y, yaw):
 
 class Patrol:
     def __init__(self):
-        self.waypoints = rospy.get_param("~waypoints")
-        self.origin = rospy.get_param("~origin", [0.0, 0.0, 0.0])
+        deg = rospy.get_param("~theta_unit", "rad") == "deg"
+        raw = rospy.get_param("~waypoints", [])
+        if not isinstance(raw, list) or not raw:
+            raise ValueError("~waypoints vazio ou nao e lista: %s" % (raw,))
+        self.waypoints = [parse_pose(p, "waypoint %d" % i, deg)
+                          for i, p in enumerate(raw, start=1)]
+        self.origin = parse_pose(rospy.get_param("~origin", [0.0, 0.0, 0.0]), "origin", deg)
+        rospy.loginfo("Waypoints (x, y, theta[rad]): %s | origem: %s",
+                      ["(%.2f, %.2f, %.2f)" % w for w in self.waypoints],
+                      "(%.2f, %.2f, %.2f)" % self.origin)
         self.spin_mode = rospy.get_param("~spin_mode", "goals")
         self.spin_speed = rospy.get_param("~spin_speed", 0.5)
         self.goal_timeout = rospy.get_param("~goal_timeout", 120.0)
@@ -105,4 +131,9 @@ class Patrol:
 
 if __name__ == "__main__":
     rospy.init_node("waypoint_navigator")
-    Patrol().run()
+    try:
+        patrol = Patrol()
+    except ValueError as e:
+        rospy.logfatal("config/waypoints.yaml invalido: %s", e)
+        raise SystemExit(1)
+    patrol.run()
