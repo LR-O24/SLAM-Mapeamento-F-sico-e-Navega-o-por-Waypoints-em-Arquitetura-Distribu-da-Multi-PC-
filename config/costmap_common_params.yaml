@@ -1,5 +1,7 @@
-# Pioneer 3DX: ~0.44 x 0.38 m. MEDIR o robo com o LIDAR e acessorios e ajustar.
-footprint: [[-0.25, -0.22], [-0.25, 0.22], [0.25, 0.22], [0.25, -0.22]]
+# Pioneer 3DX medido em 12/11/2026: 45 cm (comprimento) x 38 cm (largura), em
+# torno do base_link (centro do eixo das rodas). Supoe o eixo no meio do
+# comprimento; se nao estiver, ajuste a frente (+x) e a traseira (-x).
+footprint: [[-0.225, -0.19], [-0.225, 0.19], [0.225, 0.19], [0.225, -0.19]]
 
 obstacle_layer:
   enabled: true
