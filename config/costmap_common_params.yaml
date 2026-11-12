@@ -1,7 +1,7 @@
-# Pioneer 3DX medido em 12/11/2026: 45 cm (comprimento) x 38 cm (largura), em
-# torno do base_link (centro do eixo das rodas). Supoe o eixo no meio do
-# comprimento; se nao estiver, ajuste a frente (+x) e a traseira (-x).
-footprint: [[-0.225, -0.19], [-0.225, 0.19], [0.225, 0.19], [0.225, -0.19]]
+# Pioneer 3DX medido em 12/11/2026: 45 cm (comprimento) x 38 cm (largura).
+# Em relacao ao base_link (centro do eixo das rodas): 17 cm ate a frente (+x),
+# 28 cm ate a traseira (-x), 19 cm para cada lado.
+footprint: [[-0.28, -0.19], [-0.28, 0.19], [0.17, 0.19], [0.17, -0.19]]
 
 obstacle_layer:
   enabled: true
