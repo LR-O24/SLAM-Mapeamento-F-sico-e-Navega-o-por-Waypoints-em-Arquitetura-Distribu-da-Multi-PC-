@@ -3,6 +3,12 @@
 Este pacote catkin entrega mapeamento (gmapping), localização (AMCL), planejamento de trajetória (move_base com DWA) e patrulha entre pontos definidos.
 **A carga computacional fica toda a bordo do robô, acessado por SSH. Os notebooks ficam só com visualização no RViz, controle manual e verificações de diagnóstico.**
 
+## Vídeo de demonstração
+
+[![Vídeo de demonstração](https://img.youtube.com/vi/LN2i3dYxWzQ/hqdefault.jpg)](https://youtu.be/LN2i3dYxWzQ)
+
+**https://youtu.be/LN2i3dYxWzQ** — operação multi-PC simultânea (Notebook 1 com RViz, mapa e partículas do AMCL; Notebook 2 com o terminal de diagnóstico) e o Pioneer 3DX executando a patrulha com inspeção de 360° em cada waypoint, de forma autônoma.
+
 ## 0. Distribuições do ROS (robô com Hydro, notebooks com Melodic)
 
 - **Robô (Hydro, Ubuntu 12.04, Python 2):** é onde rodam o driver, o sensor a laser, o gmapping, o AMCL, o move_base e a patrulha.
